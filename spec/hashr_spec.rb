@@ -117,6 +117,12 @@ describe Hashr do
       end
     end
 
+    describe 'on a list of hashes' do
+      it 'returns the value' do
+        expect(Hashr.new(foo: [{ bar: 1 }, { bar: 2 }]).foo.last.bar).to eq(2)
+      end
+    end
+
     describe 'on an non-existing key' do
       it 'it returns nil' do
         expect(Hashr.new(foo: 'foo').bar).to eq(nil)
@@ -159,6 +165,11 @@ describe Hashr do
     it 'converts a hash into a Hashr instance' do
       hashr.foo = { bar: { baz: 'baz' } }
       expect(hashr.foo.bar.baz).to eq('baz')
+    end
+
+    it 'converts a nested list of hashes into a Hashr instance' do
+      hashr.foo = [{ bar: 1 }, { bar: 2 }]
+      expect(hashr.foo.last.bar).to eq(2)
     end
   end
 

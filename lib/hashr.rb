@@ -35,7 +35,7 @@ class Hashr < BasicObject
 
     @class = klass
     @data = defaults.deep_merge(data).inject({}) do |result, (key, value)|
-      result.merge(key => value.is_a?(::Hash) ? ::Hashr.new(value, {}) : value)
+      result.merge(key => hashrize(value))
     end
   end
 
@@ -48,7 +48,7 @@ class Hashr < BasicObject
   end
 
   def []=(key, value)
-    @data.store(to_key(key), value.is_a?(::Hash) ? ::Hashr.new(value, {}) : value)
+    @data.store(to_key(key), hashrize(value))
   end
 
   def values_at(*keys)
@@ -105,4 +105,16 @@ class Hashr < BasicObject
     def to_key(key)
       key.respond_to?(:to_sym) ? key.to_sym : key
     end
+
+    def hashrize(value)
+      case value
+      when ::Hash
+        ::Hashr.new(value, {})
+      when ::Array
+        value.map { |v| hashrize(v) }
+      else
+        value
+      end
+    end
+
 end
